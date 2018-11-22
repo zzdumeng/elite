@@ -11,7 +11,6 @@ class _ElitePageState extends State<ElitePage> {
   @override
   void initState() {
     super.initState();
-    _getToken();
   }
 
   _getToken() async {
@@ -20,8 +19,8 @@ class _ElitePageState extends State<ElitePage> {
     _username = prefs.get('username') ?? '';
     if (_token == '') {
       // goto login page
-      print('going to /login');
-      Navigator.pushNamed(context, '/login');
+      // print('going to /login');
+      // Navigator.pushNamed(context, '/login');
     } else {
       setState(() {
         _token = _token;

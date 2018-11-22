@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 // import './simple.dart';
-// import './ui.dart';
+import './ui.dart';
 // import './layout.dart';
 import './elite.dart';
+import './home.dart';
 // import './login.dart';
 
 main() {
@@ -19,13 +20,25 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.blue,
       ),
       // home: RandomWords(),
-      home: Scaffold(
-        body: ElitePage(),
-        // body: LoginPage()
-      ),
+      home: HomePage(),
       routes: {
         "/login": (context) => LoginPage()
       },
+      // Scaffold(
+      //   appBar: AppBar(
+      //     title: Text("SwanLake"),
+      //     bottom: TabBar(tabs: <Widget>[
+      //       Tab(icon: Icon(Icons.receipt),text: "record",),
+      //       Tab(icon: Icon(Icons.account_circle),text: "me",)
+      //     ],),
+      //   ),
+      //   // body: ElitePage(),
+      //   body: PlayView(),
+      //   // body: LoginPage()
+      // ),
+      // routes: {
+      //   "/login": (context) => LoginPage()
+      // },
     );
   }
 }

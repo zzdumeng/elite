@@ -3,22 +3,36 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:cookie_jar/cookie_jar.dart';
 
 class LoginPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return new _LoginPageState();
   }
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String _token = '';
-  String _username = '';
+  // FIXME: remove my psw
+  String _token = '13681647716';
+  String _username = 'jingyingjia';
   final nameController = TextEditingController();
   final pwController = TextEditingController();
 
-  _loginSuccess() async {}
+  initState() {
+    super.initState();
+    nameController.text = _username;
+    pwController.text = _token;
+  }
+  _loginSuccess(var data) async {
+      print("success, token is $data['token']");
+      // save to preference
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      await pref.setString("token", data['token']);
+      await pref.setString("username", data['name']);
+      Navigator.pushNamed(context, '/');
+  }
 
   Future<Null> _loginFail(String info) async {
     return showDialog<Null>(
@@ -46,7 +60,10 @@ class _LoginPageState extends State<LoginPage> {
       },
     );
   }
-
+  Future<String> get _cookieFile async{
+    Directory dir = await getApplicationDocumentsDirectory();
+    return dir.path + "/.cookies";
+  }
   submit() async {
     String name = nameController.text.trim();
     String pw = pwController.text.trim();
@@ -58,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
       'cime': 'AE572568-62C8-4495-915D-B693F4DA2C4A'
     };
     var dio = new Dio();
-
+    dio.cookieJar = new PersistCookieJar(await _cookieFile);
     var uri = 'https://i.jingyingba.com/app/app/index.php';
     Response<String> resp = await dio.post(uri,
         data: body,
@@ -68,8 +85,8 @@ class _LoginPageState extends State<LoginPage> {
     var data = json.decode(resp.data);
     if (data['token']) {
       // success
-
-      Navigator.pushNamed(context, '/');
+      print(resp.headers.value(HttpHeaders.setCookieHeader));
+      _loginSuccess(data);
     } else {
       _loginFail(data['info']);
     }
@@ -79,7 +96,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        body: Column(
+        body: Center(
+            child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -102,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
             },
             child: Text('login'))
       ],
-    ));
+    )));
   }
 
   @override
